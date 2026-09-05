@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 1230" width="920" height="1230" font-family="Helvetica, Arial, sans-serif">
+<title>Fluxo de Criação de Pedido</title>
+<rect x="0" y="0" width="920" height="1230" fill="#ffffff"/>
+<defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555555"/>
+    </marker>
+  </defs>
+
+<path d="M 460.0 130 L 460.0 160" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 250 L 460.0 280" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 370 L 460.0 400" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 490 L 460.0 520" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="446.0" y="495.0" width="28" height="16" fill="#fdfdfd" opacity="0.9"/>
+<text x="460.0" y="506.0" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="11.5" fill="#333333">não</text>
+<path d="M 460.0 610 L 460.0 640" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 730 L 460.0 760" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 850 L 460.0 880" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 970 L 460.0 1000" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<path d="M 460.0 1090 L 460.0 1120" fill="none" stroke="#555555" stroke-width="1.6" marker-end="url(#arrow)"/>
+<rect x="60" y="40" width="800" height="90" rx="10" ry="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+<text x="460.0" y="85.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="0.0">1. Cliente chama POST /api/v1/orders no order-service</tspan></text>
+<rect x="60" y="160" width="800" height="90" rx="10" ry="10" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+<text x="460.0" y="205.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">2. order-service chama GET /products/{id} no catalog-service</tspan><tspan x="460.0" dy="16.5">(Resilience4j: Retry + CircuitBreaker + Bulkhead)</tspan></text>
+<rect x="60" y="280" width="800" height="90" rx="10" ry="10" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.5"/>
+<text x="460.0" y="325.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">3. catalog-service lê do Redis (cache-aside);</tspan><tspan x="460.0" dy="16.5">em caso de miss, consulta o DynamoDB</tspan></text>
+<rect x="60" y="400" width="800" height="90" rx="10" ry="10" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"/>
+<text x="460.0" y="445.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">4. Estoque insuficiente?</tspan><tspan x="460.0" dy="16.5">Sim -&gt; HTTP 422 (BusinessException) e fim do fluxo</tspan></text>
+<rect x="60" y="520" width="800" height="90" rx="10" ry="10" fill="#ffe6cc" stroke="#d79b00" stroke-width="1.5"/>
+<text x="460.0" y="565.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">5. order-service grava o pedido (transação ACID)</tspan><tspan x="460.0" dy="16.5">na tabela orders/order_items do Amazon RDS</tspan></text>
+<rect x="60" y="640" width="800" height="90" rx="10" ry="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"/>
+<text x="460.0" y="685.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">6. order-service publica OrderCreatedEvent</tspan><tspan x="460.0" dy="16.5">no tópico Amazon SNS order-notifications-topic</tspan></text>
+<rect x="60" y="760" width="800" height="90" rx="10" ry="10" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>
+<text x="460.0" y="805.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">7. order-service responde HTTP 201 ao cliente</tspan><tspan x="460.0" dy="16.5">(não espera a notificação — desacoplamento assíncrono)</tspan></text>
+<rect x="60" y="880" width="800" height="90" rx="10" ry="10" fill="#e1d5e7" stroke="#9673a6" stroke-width="1.5"/>
+<text x="460.0" y="925.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">8. SNS entrega (fan-out) a mensagem na fila</tspan><tspan x="460.0" dy="16.5">Amazon SQS order-events-queue</tspan></text>
+<rect x="60" y="1000" width="800" height="90" rx="10" ry="10" fill="#d5e8d4" stroke="#82b366" stroke-width="1.5"/>
+<text x="460.0" y="1045.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">9. notification-service consome via @SqsListener</tspan><tspan x="460.0" dy="16.5">e envia e-mail de confirmação via Amazon SES</tspan></text>
+<rect x="60" y="1120" width="800" height="90" rx="10" ry="10" fill="#f8cecc" stroke="#b85450" stroke-width="1.5"/>
+<text x="460.0" y="1165.0" text-anchor="middle" dominant-baseline="middle" font-family="Helvetica, Arial, sans-serif" font-size="13.5" font-weight="normal" fill="#1a1a1a"><tspan x="460.0" dy="-8.25">10. Falha no envio? A mensagem volta à fila;</tspan><tspan x="460.0" dy="16.5">após N tentativas, cai automaticamente na DLQ</tspan></text>
+</svg>

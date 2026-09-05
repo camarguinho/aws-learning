@@ -9,9 +9,9 @@ independentes em deploy e em banco de dados, comunicando-se de forma
 síncrona (HTTP, para consultas) e assíncrona (SNS/SQS, para eventos de
 domínio). O diagrama completo:
 
-📎 [`ebook/diagrams/01-arquitetura-geral.drawio`](diagrams/01-arquitetura-geral.drawio)
-— abra em [app.diagrams.net](https://app.diagrams.net) (File → Open From →
-Device).
+![Arquitetura geral](diagrams/01-arquitetura-geral.svg)
+
+*(fonte editável em [`diagrams/01-arquitetura-geral.drawio`](diagrams/01-arquitetura-geral.drawio), para abrir em [app.diagrams.net](https://app.diagrams.net))*
 
 Resumo textual do diagrama:
 
@@ -38,9 +38,13 @@ Cliente
 
 ## Fluxo de criação de um pedido, passo a passo
 
-📎 [`ebook/diagrams/02-fluxo-criacao-pedido.drawio`](diagrams/02-fluxo-criacao-pedido.drawio)
-detalha os 10 passos, desde o `POST /api/v1/orders` até a mensagem cair na
-DLQ em caso de falha persistente no envio do e-mail. Os pontos-chave:
+![Fluxo de criação de pedido](diagrams/02-fluxo-criacao-pedido.svg)
+
+*(fonte editável em [`diagrams/02-fluxo-criacao-pedido.drawio`](diagrams/02-fluxo-criacao-pedido.drawio))*
+
+O diagrama acima detalha os 10 passos, desde o `POST /api/v1/orders` até a
+mensagem cair na DLQ em caso de falha persistente no envio do e-mail. Os
+pontos-chave:
 
 1. A validação de estoque acontece **antes** de abrir a transação de
    escrita no RDS — evita segurar uma conexão de banco esperando uma
@@ -55,8 +59,11 @@ DLQ em caso de falha persistente no envio do e-mail. Os pontos-chave:
 
 ## Rede: onde cada peça rodaria na AWS real
 
-📎 [`ebook/diagrams/03-rede-vpc.drawio`](diagrams/03-rede-vpc.drawio) mostra
-a VPC com 2 AZs, subnets públicas (ALB + NAT Gateway), subnets privadas de
+![Rede VPC](diagrams/03-rede-vpc.svg)
+
+*(fonte editável em [`diagrams/03-rede-vpc.drawio`](diagrams/03-rede-vpc.drawio))*
+
+A VPC tem 2 AZs, subnets públicas (ALB + NAT Gateway), subnets privadas de
 aplicação (os 3 microsserviços) e subnets privadas de dados (RDS +
 ElastiCache) — ver detalhes no [Capítulo 3](03-redes-vpc.md).
 

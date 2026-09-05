@@ -48,14 +48,27 @@ capítulo 0:
 17. [Guia de Uso e Swagger/OpenAPI](ebook/17-guia-de-uso-swagger.md)
 18. [Referências Oficiais AWS](ebook/18-referencias.md)
 
-## 🗺️ Diagramas (draw.io)
+## 🗺️ Diagramas
 
-Em [`ebook/diagrams/`](ebook/diagrams/) — abra os arquivos `.drawio` em
-[app.diagrams.net](https://app.diagrams.net):
+Em [`ebook/diagrams/`](ebook/diagrams/): cada diagrama tem um `.svg` (renderiza
+direto aqui no GitHub, sem precisar de nenhuma ferramenta) e um `.drawio`
+equivalente, para quem quiser editar visualmente em
+[app.diagrams.net](https://app.diagrams.net).
 
-- [`01-arquitetura-geral.drawio`](ebook/diagrams/01-arquitetura-geral.drawio) — visão completa dos 3 serviços e dos serviços AWS
-- [`02-fluxo-criacao-pedido.drawio`](ebook/diagrams/02-fluxo-criacao-pedido.drawio) — passo a passo da criação de um pedido
-- [`03-rede-vpc.drawio`](ebook/diagrams/03-rede-vpc.drawio) — topologia de VPC/subnets/AZs de referência
+**Arquitetura geral** — visão completa dos 3 serviços e dos serviços AWS
+([editar .drawio](ebook/diagrams/01-arquitetura-geral.drawio)):
+
+![Arquitetura geral](ebook/diagrams/01-arquitetura-geral.svg)
+
+**Fluxo de criação de pedido** — passo a passo, do POST até a DLQ
+([editar .drawio](ebook/diagrams/02-fluxo-criacao-pedido.drawio)):
+
+![Fluxo de criação de pedido](ebook/diagrams/02-fluxo-criacao-pedido.svg)
+
+**Rede VPC** — topologia de referência de subnets/AZs para produção
+([editar .drawio](ebook/diagrams/03-rede-vpc.drawio)):
+
+![Rede VPC](ebook/diagrams/03-rede-vpc.svg)
 
 ## 🏗️ Estrutura do repositório
 

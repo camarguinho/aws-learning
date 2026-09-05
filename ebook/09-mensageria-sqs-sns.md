@@ -63,9 +63,11 @@ SNS no meio, adicionar um novo consumidor (uma fila de analytics, uma
 Lambda de detecção de fraude, um webhook de parceiro) é só inscrever um
 novo assinante no tópico — **zero mudança de código ou deploy** no
 `order-service`. Esse desacoplamento produtor/consumidor é o ganho central
-de uma arquitetura orientada a eventos, e é justamente o que o diagrama
-[`02-fluxo-criacao-pedido.drawio`](diagrams/02-fluxo-criacao-pedido.drawio)
-ilustra passo a passo.
+de uma arquitetura orientada a eventos:
+
+![Fluxo de criação de pedido](diagrams/02-fluxo-criacao-pedido.svg)
+
+*(fonte editável em [`diagrams/02-fluxo-criacao-pedido.drawio`](diagrams/02-fluxo-criacao-pedido.drawio))*
 
 ## Dead Letter Queue em ação
 

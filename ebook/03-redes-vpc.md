@@ -27,9 +27,11 @@
 
 ## Como isso se aplica à nossa arquitetura
 
-Veja o diagrama [`ebook/diagrams/03-rede-vpc.drawio`](diagrams/03-rede-vpc.drawio)
-(abra em [app.diagrams.net](https://app.diagrams.net)). Em uma implantação
-real na AWS, a topologia seria:
+![Rede VPC](diagrams/03-rede-vpc.svg)
+
+*(fonte editável em [`diagrams/03-rede-vpc.drawio`](diagrams/03-rede-vpc.drawio))*
+
+Em uma implantação real na AWS, a topologia seria:
 
 - **2 subnets públicas** (uma por AZ): apenas o Application Load Balancer e
   os NAT Gateways ficam aqui.
