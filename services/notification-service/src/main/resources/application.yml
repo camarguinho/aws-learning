@@ -1,0 +1,55 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: notification-service
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      ses:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+        region: us-east-1
+
+app:
+  ses:
+    from-address: no-reply@ecommerce.example.com
+
+resilience4j:
+  retry:
+    instances:
+      ses:
+        max-attempts: 3
+        wait-duration: 300ms
+
+# Publica métricas do Micrometer no CloudWatch a cada 1 minuto, no namespace
+# "EcommerceAwsLearning". Em produção, prefira um intervalo maior (ex.: 5 min)
+# para reduzir custo de API (CloudWatch cobra por chamada PutMetricData).
+management:
+  cloudwatch:
+    metrics:
+      export:
+        namespace: EcommerceAwsLearning
+        step: 1m
+        enabled: ${CLOUDWATCH_METRICS_ENABLED:false}
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    br.com.camarguinho.awslearning: INFO

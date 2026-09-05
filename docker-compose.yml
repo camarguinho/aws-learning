@@ -1,0 +1,111 @@
+# Infraestrutura local que emula os serviços AWS usados pelo case de e-commerce.
+# Nada precisa ser instalado na máquina além do Docker: `docker compose up -d`.
+#
+# - LocalStack  -> emula S3, DynamoDB, SQS, SNS, Secrets Manager, SSM Parameter Store,
+#                  SES e CloudWatch (community edition).
+# - PostgreSQL  -> emula o Amazon RDS (PostgreSQL engine) usado pelo order-service.
+# - Redis       -> emula o Amazon ElastiCache (Redis) usado pelo catalog-service.
+services:
+
+  localstack:
+    image: localstack/localstack:3.7
+    container_name: aws-learning-localstack
+    ports:
+      - "4566:4566"       # Edge port único para todas as APIs AWS emuladas
+    environment:
+      - SERVICES=s3,dynamodb,sqs,sns,secretsmanager,ssm,ses,cloudwatch,logs,iam,sts
+      - DEBUG=0
+      - PERSISTENCE=1
+      - DEFAULT_REGION=us-east-1
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "./infra/localstack/init:/etc/localstack/init/ready.d"
+      - "localstack-data:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: aws-learning-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=orders_app
+      - POSTGRES_PASSWORD=orders_app_pwd
+      - POSTGRES_DB=orders
+    volumes:
+      - "postgres-data:/var/lib/postgresql/data"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orders_app -d orders"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: aws-learning-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  catalog-service:
+    build:
+      context: .
+      dockerfile: services/catalog-service/Dockerfile
+    container_name: aws-learning-catalog-service
+    ports:
+      - "8081:8081"
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      localstack:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  order-service:
+    build:
+      context: .
+      dockerfile: services/order-service/Dockerfile
+    container_name: aws-learning-order-service
+    ports:
+      - "8082:8082"
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - CATALOG_SERVICE_URL=http://catalog-service:8081
+    depends_on:
+      localstack:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      catalog-service:
+        condition: service_started
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    container_name: aws-learning-notification-service
+    ports:
+      - "8083:8083"
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+    depends_on:
+      localstack:
+        condition: service_healthy
+
+volumes:
+  localstack-data:
+  postgres-data:

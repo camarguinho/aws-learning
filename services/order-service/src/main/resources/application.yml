@@ -1,0 +1,80 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: order-service
+  # Importa, em tempo de bootstrap, os segredos do RDS a partir do Secrets
+  # Manager e os parâmetros de configuração do SSM Parameter Store. As chaves
+  # do JSON do segredo (username/password) e o nome do parâmetro (db-url)
+  # viram properties comuns, usadas logo abaixo em spring.datasource.*.
+  config:
+    import:
+      - aws-secretsmanager:/ecommerce/order-service/db-credentials
+      - aws-parameterstore:/ecommerce/order-service/
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/orders
+    username: ${username}
+    password: ${password}
+  jpa:
+    hibernate:
+      # ddl-auto=update é aceitável apenas neste projeto de estudo. Em produção,
+      # use uma ferramenta de migração versionada (Flyway/Liquibase) — ver
+      # capítulo de boas práticas do ebook.
+      ddl-auto: update
+    open-in-view: false
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      sns:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      secretsmanager:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      parameterstore:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+
+app:
+  catalog-service:
+    base-url: ${CATALOG_SERVICE_URL:http://localhost:8081}
+  sns:
+    order-notifications-topic: order-notifications-topic
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      catalog-service:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+  retry:
+    instances:
+      catalog-service:
+        max-attempts: 3
+        wait-duration: 200ms
+  bulkhead:
+    instances:
+      catalog-service:
+        max-concurrent-calls: 10
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    br.com.camarguinho.awslearning: INFO

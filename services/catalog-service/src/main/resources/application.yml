@@ -1,0 +1,63 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: catalog-service
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: test
+        secret-key: test
+      # endpoint único do LocalStack para todos os serviços AWS emulados.
+      # Em produção, essas três chaves de endpoint NÃO existem — o SDK
+      # resolve os endpoints reais da AWS automaticamente pela região.
+      dynamodb:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      s3:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+        path-style-access-enabled: true
+
+app:
+  s3:
+    product-images-bucket: ecommerce-product-images
+  cache:
+    products-ttl-seconds: 300
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      s3:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+  retry:
+    instances:
+      s3:
+        max-attempts: 3
+        wait-duration: 200ms
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    br.com.camarguinho.awslearning: INFO
