@@ -1,92 +1,134 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Arquitetura Geral" id="arch-overview">
-    <mxGraphModel dx="1400" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+    <mxGraphModel dx="3277" dy="1087" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-
-        <mxCell id="client" value="Cliente&#10;(Browser / App / Postman)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
-          <mxGeometry x="40" y="440" width="160" height="60" as="geometry" />
+        <mxCell id="client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="Cliente&#xa;(Browser / App / Postman)" vertex="1">
+          <mxGeometry height="100" width="160" x="-20" y="410" as="geometry" />
         </mxCell>
-
-        <mxCell id="vpcBox" value="Amazon VPC (us-east-1)" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=none;strokeColor=#232F3E;dashed=1;fontStyle=1" vertex="1" parent="1">
-          <mxGeometry x="280" y="40" width="1260" height="900" as="geometry" />
+        <mxCell id="vpcBox" parent="1" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;fillColor=none;strokeColor=#232F3E;dashed=1;fontStyle=1" value="Amazon VPC (us-east-1)" vertex="1">
+          <mxGeometry height="900" width="1090" x="280" y="20" as="geometry" />
         </mxCell>
-
-        <mxCell id="catalog" value="catalog-service&#10;(Spring Boot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="360" y="120" width="180" height="60" as="geometry" />
+        <mxCell id="catalog" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="catalog-service&#xa;(Spring Boot)" vertex="1">
+          <mxGeometry height="200" width="180" x="350" y="80" as="geometry" />
         </mxCell>
-
-        <mxCell id="order" value="order-service&#10;(Spring Boot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="360" y="440" width="180" height="60" as="geometry" />
+        <mxCell id="order" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="order-service&#xa;(Spring Boot)" vertex="1">
+          <mxGeometry height="60" width="180" x="590" y="440" as="geometry" />
         </mxCell>
-
-        <mxCell id="notification" value="notification-service&#10;(Spring Boot)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
-          <mxGeometry x="360" y="760" width="180" height="60" as="geometry" />
+        <mxCell id="notification" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="notification-service&#xa;(Spring Boot)" vertex="1">
+          <mxGeometry height="60" width="180" x="360" y="720" as="geometry" />
         </mxCell>
-
-        <mxCell id="dynamodb" value="Amazon DynamoDB&#10;(tabela Product)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="680" y="80" width="180" height="60" as="geometry" />
+        <mxCell id="dynamodb" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amazon DynamoDB&#xa;(tabela Product)" vertex="1">
+          <mxGeometry height="60" width="180" x="810" y="70" as="geometry" />
         </mxCell>
-
-        <mxCell id="s3" value="Amazon S3&#10;(imagens de produto)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="680" y="160" width="180" height="60" as="geometry" />
+        <mxCell id="s3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amazon S3&#xa;(imagens de produto)" vertex="1">
+          <mxGeometry height="60" width="180" x="810" y="220" as="geometry" />
         </mxCell>
-
-        <mxCell id="elasticache" value="Amazon ElastiCache&#10;(Redis)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="680" y="240" width="180" height="60" as="geometry" />
+        <mxCell id="elasticache" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amazon ElastiCache&#xa;(Redis)" vertex="1">
+          <mxGeometry height="60" width="180" x="810" y="150" as="geometry" />
         </mxCell>
-
-        <mxCell id="rds" value="Amazon RDS&#10;(PostgreSQL)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="680" y="420" width="180" height="60" as="geometry" />
+        <mxCell id="rds" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amazon RDS&#xa;(PostgreSQL)" vertex="1">
+          <mxGeometry height="60" width="180" x="590" y="310" as="geometry" />
         </mxCell>
-
-        <mxCell id="secrets" value="AWS Secrets Manager&#10;(credenciais RDS)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="680" y="500" width="180" height="60" as="geometry" />
+        <mxCell id="secrets" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="AWS Secrets Manager&#xa;(credenciais RDS)" vertex="1">
+          <mxGeometry height="60" width="180" x="590" y="630" as="geometry" />
         </mxCell>
-
-        <mxCell id="ssm" value="AWS Systems Manager&#10;Parameter Store" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
-          <mxGeometry x="680" y="580" width="180" height="60" as="geometry" />
+        <mxCell id="ssm" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="AWS Systems Manager&#xa;Parameter Store" vertex="1">
+          <mxGeometry height="60" width="180" x="880" y="310" as="geometry" />
         </mxCell>
-
-        <mxCell id="sns" value="Amazon SNS&#10;order-notifications-topic" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="1000" y="440" width="200" height="60" as="geometry" />
+        <mxCell id="sns" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Amazon SNS&#xa;order-notifications-topic" vertex="1">
+          <mxGeometry height="60" width="200" x="870" y="530" as="geometry" />
         </mxCell>
-
-        <mxCell id="sqs" value="Amazon SQS&#10;order-events-queue&#10;(+ DLQ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
-          <mxGeometry x="1000" y="600" width="200" height="70" as="geometry" />
+        <mxCell id="sqs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" value="Amazon SQS&#xa;order-events-queue&#xa;(+ DLQ)" vertex="1">
+          <mxGeometry height="70" width="200" x="870" y="715" as="geometry" />
         </mxCell>
-
-        <mxCell id="ses" value="Amazon SES&#10;(e-mail de confirmação)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
-          <mxGeometry x="680" y="760" width="180" height="60" as="geometry" />
+        <mxCell id="ses" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="Amazon SES&#xa;(e-mail de confirmação)" vertex="1">
+          <mxGeometry height="60" width="180" x="360" y="840" as="geometry" />
         </mxCell>
-
-        <mxCell id="cloudwatch" value="Amazon CloudWatch&#10;(logs, métricas, alarmes)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="1000" y="760" width="200" height="60" as="geometry" />
+        <mxCell id="cloudwatch" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="Amazon CloudWatch&#xa;(logs, métricas, alarmes)" vertex="1">
+          <mxGeometry height="60" width="200" x="350" y="580" as="geometry" />
         </mxCell>
-
-        <mxCell id="iam" value="AWS IAM&#10;(roles/policies por serviço)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
-          <mxGeometry x="1300" y="80" width="200" height="60" as="geometry" />
+        <mxCell id="iam" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="AWS IAM&#xa;(roles/policies por serviço)" vertex="1">
+          <mxGeometry height="60" width="200" x="1130" y="60" as="geometry" />
         </mxCell>
-
-        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="client" target="catalog"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="client" target="order"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e3" value="valida estoque" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="order" target="catalog"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <mxCell id="e4" value="read/write" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="catalog" target="dynamodb"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" value="presigned URL" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="catalog" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e6" value="cache-aside" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="catalog" target="elasticache"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <mxCell id="e7" value="JPA" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="order" target="rds"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="order" target="secrets"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="order" target="ssm"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e10" value="publica OrderCreatedEvent" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="order" target="sns"><mxGeometry relative="1" as="geometry" /></mxCell>
-
-        <mxCell id="e11" value="fan-out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="sns" target="sqs"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e12" value="@SqsListener" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="sqs" target="notification"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" edge="1" parent="1" source="notification" target="ses"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e14" value="métricas custom" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="notification" target="cloudwatch"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e15" value="logs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" edge="1" parent="1" source="order" target="cloudwatch"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="catalog">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="client" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="order">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="250" y="500" />
+              <mxPoint x="250" y="500" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="catalog" value="valida estoque">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="catalog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="dynamodb" value="read/write">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="550" y="100" />
+              <mxPoint x="550" y="100" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="catalog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="s3" value="presigned URL">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="240" />
+              <mxPoint x="570" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="catalog" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="elasticache" value="cache-aside">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="rds" value="JPA">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="secrets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="ssm">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="900" y="460" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="sns" value="publica OrderCreatedEvent">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="980" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="sns" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="sqs" value="fan-out">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="sqs" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="notification" value="@SqsListener">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="notification" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;" target="ses">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="notification" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="cloudwatch" value="métricas custom">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="order" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;dashed=1;" target="cloudwatch" value="logs">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="640" y="545" />
+              <mxPoint x="450" y="545" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
