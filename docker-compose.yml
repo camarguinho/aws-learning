@@ -1,32 +1,64 @@
 # Infraestrutura local que emula os serviços AWS usados pelo case de e-commerce.
 # Nada precisa ser instalado na máquina além do Docker: `docker compose up -d`.
 #
-# - LocalStack  -> emula S3, DynamoDB, SQS, SNS, Secrets Manager, SSM Parameter Store,
-#                  SES e CloudWatch (community edition).
+# >>> PILOTO: esta branch troca o LocalStack pelo LocalEmu <<<
+# Motivo: a partir de 23/03/2026 a LocalStack arquivou a edição Community
+# (Apache 2.0) e passou a exigir conta + token, com o plano gratuito ("Hobby")
+# restrito a uso NÃO-COMERCIAL — o que inviabiliza usar a imagem oficial numa
+# empresa sem licença paga. O LocalEmu é um fork comunitário do código Apache
+# 2.0 da última versão Community da LocalStack, mantido livre e sem token.
+# Ele escuta na mesma porta (4566) e fala a mesma API — por isso a troca abaixo
+# é só a imagem: nenhuma linha do Spring Cloud AWS nos serviços mudou.
+#
+# - LocalEmu    -> emula S3, DynamoDB, SQS, SNS, Secrets Manager, SSM Parameter Store,
+#                  SES e CloudWatch.
 # - PostgreSQL  -> emula o Amazon RDS (PostgreSQL engine) usado pelo order-service.
 # - Redis       -> emula o Amazon ElastiCache (Redis) usado pelo catalog-service.
 services:
 
-  localstack:
-    image: localstack/localstack:3.7
-    container_name: aws-learning-localstack
+  localemu:
+    # TODO(piloto): fixar uma tag de versão específica assim que a suíte de
+    # testes for validada contra ela (evita quebrar silenciosamente com um
+    # `latest` novo). Ver PILOTO-LOCALEMU.md.
+    image: localemu/localemu:latest
+    container_name: aws-learning-localemu
     ports:
       - "4566:4566"       # Edge port único para todas as APIs AWS emuladas
     environment:
+      # Herdado da configuração do LocalStack (o LocalEmu é um fork do mesmo
+      # código) — se a variável for ignorada, o LocalEmu tende a habilitar os
+      # serviços sob demanda mesmo assim.
       - SERVICES=s3,dynamodb,sqs,sns,secretsmanager,ssm,ses,cloudwatch,logs,iam,sts
       - DEBUG=0
       - PERSISTENCE=1
       - DEFAULT_REGION=us-east-1
       - AWS_DEFAULT_REGION=us-east-1
     volumes:
-      - "./infra/localstack/init:/etc/localstack/init/ready.d"
-      - "localstack-data:/var/lib/localstack"
+      - "localemu-data:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4566/_localstack/health"]
       interval: 5s
       timeout: 5s
       retries: 20
+
+  # Provisiona os recursos AWS (bucket, tabela, filas, tópico, segredo,
+  # parâmetros) rodando o script uma única vez, de fora do container do
+  # emulador — não depende de nenhum hook interno específico do LocalEmu,
+  # só da API AWS padrão exposta na porta 4566.
+  init:
+    image: amazon/aws-cli:2.17.62
+    container_name: aws-learning-localemu-init
+    entrypoint: ["/bin/sh", "/init/init-aws.sh"]
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      - "./infra/localemu/init/init-aws.sh:/init/init-aws.sh:ro"
+    depends_on:
+      localemu:
+        condition: service_healthy
 
   postgres:
     image: postgres:16-alpine
@@ -64,12 +96,14 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ENDPOINT_URL=http://localemu:4566
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      localstack:
+      localemu:
         condition: service_healthy
+      init:
+        condition: service_completed_successfully
       redis:
         condition: service_healthy
 
@@ -81,13 +115,15 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ENDPOINT_URL=http://localemu:4566
       - DB_HOST=postgres
       - DB_PORT=5432
       - CATALOG_SERVICE_URL=http://catalog-service:8081
     depends_on:
-      localstack:
+      localemu:
         condition: service_healthy
+      init:
+        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       catalog-service:
@@ -101,11 +137,13 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - AWS_ENDPOINT_URL=http://localstack:4566
+      - AWS_ENDPOINT_URL=http://localemu:4566
     depends_on:
-      localstack:
+      localemu:
         condition: service_healthy
+      init:
+        condition: service_completed_successfully
 
 volumes:
-  localstack-data:
+  localemu-data:
   postgres-data:
