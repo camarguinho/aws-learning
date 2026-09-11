@@ -15,7 +15,8 @@ spring:
       credentials:
         access-key: test
         secret-key: test
-      # endpoint único do LocalStack para todos os serviços AWS emulados.
+      # endpoint único do emulador AWS local para todos os serviços emulados
+      # (nesta branch, o MiniStack — ver PILOTO-MINISTACK.md).
       # Em produção, essas três chaves de endpoint NÃO existem — o SDK
       # resolve os endpoints reais da AWS automaticamente pela região.
       dynamodb:
