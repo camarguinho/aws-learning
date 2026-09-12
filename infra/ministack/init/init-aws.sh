@@ -1,16 +1,14 @@
 #!/bin/sh
-# Provisiona os recursos AWS usados pelo case de e-commerce contra o MiniStack.
-# Roda num container dedicado (serviço "init" do docker-compose.yml), separado
-# do emulador — por isso o endpoint aponta para o hostname "ministack" da rede
-# Docker, não para "localhost".
+# Hook "ready.d" nativo do MiniStack: este script roda automaticamente,
+# DENTRO do próprio container do emulador, assim que a API fica pronta para
+# receber requisições (mesma convenção herdada do LocalStack). Provisiona os
+# recursos AWS usados pelo case de e-commerce.
+#
+# AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_DEFAULT_REGION e
+# AWS_ENDPOINT_URL já vêm injetados automaticamente pelo MiniStack neste
+# script — nenhuma configuração manual de credenciais/endpoint é necessária,
+# e a CLI "aws" já vem embutida na imagem.
 set -eu
-
-export AWS_ACCESS_KEY_ID=test
-export AWS_SECRET_ACCESS_KEY=test
-export AWS_DEFAULT_REGION=us-east-1
-ENDPOINT="http://ministack:4566"
-
-aws() { command aws --endpoint-url="$ENDPOINT" "$@"; }
 
 echo "==> [S3] Criando bucket de imagens de produto"
 aws s3 mb s3://ecommerce-product-images
@@ -34,7 +32,7 @@ aws sns create-topic --name order-notifications-topic
 echo "==> [SNS->SQS] Inscrevendo a fila no tópico (fan-out, raw message delivery)"
 TOPIC_ARN=$(aws sns list-topics --query "Topics[?ends_with(TopicArn, ':order-notifications-topic')].TopicArn" --output text)
 QUEUE_ARN=$(aws sqs get-queue-attributes \
-  --queue-url "$ENDPOINT/000000000000/order-events-queue" \
+  --queue-url "$AWS_ENDPOINT_URL/000000000000/order-events-queue" \
   --attribute-names QueueArn --query "Attributes.QueueArn" --output text)
 aws sns subscribe --topic-arn "$TOPIC_ARN" --protocol sqs --notification-endpoint "$QUEUE_ARN" \
   --attributes '{"RawMessageDelivery":"true"}'

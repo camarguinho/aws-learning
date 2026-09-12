@@ -1,64 +1,53 @@
 # Infraestrutura local que emula os serviços AWS usados pelo case de e-commerce.
 # Nada precisa ser instalado na máquina além do Docker: `docker compose up -d`.
 #
-# >>> PILOTO: esta branch troca o LocalStack pelo MiniStack <<<
-# Motivo: a partir de 23/03/2026 a LocalStack arquivou a edição Community
-# (Apache 2.0) e passou a exigir conta + token, com o plano gratuito ("Hobby")
-# restrito a uso NÃO-COMERCIAL — o que inviabiliza usar a imagem oficial numa
-# empresa sem licença paga. O MiniStack é um emulador AWS local independente,
-# escrito do zero, MIT, sem conta/token — escuta na mesma porta (4566) e fala
-# a mesma API, então a troca abaixo é só a imagem: nenhuma linha do Spring
-# Cloud AWS nos serviços mudou.
-#
-# - MiniStack   -> emula S3, DynamoDB, SQS, SNS, Secrets Manager, SSM Parameter Store,
-#                  SES e CloudWatch.
+# - MiniStack   -> emulador AWS local, edge port único (ver PILOTO-MINISTACK.md)
+#                  para S3, DynamoDB, SQS, SNS, Secrets Manager, SSM Parameter
+#                  Store, SES e CloudWatch.
 # - PostgreSQL  -> emula o Amazon RDS (PostgreSQL engine) usado pelo order-service.
 # - Redis       -> emula o Amazon ElastiCache (Redis) usado pelo catalog-service.
+#
+# Os 3 microsserviços sobem com o profile Spring "local" (SPRING_PROFILES_ACTIVE
+# abaixo) — é ele, e só ele, que ativa credenciais de teste e o endpoint do
+# MiniStack (application-local.yml, em cada serviço). O application.yml
+# "de produção" de cada serviço não tem endpoint nem credentials: o SDK usa a
+# default credential provider chain e os endpoints reais da AWS. Ver
+# PILOTO-MINISTACK.md para o racional completo e os pontos de fricção da troca.
 services:
 
   ministack:
     # TODO(piloto): fixar uma tag de versão específica assim que a suíte de
-    # testes for validada contra ela. Ver PILOTO-MINISTACK.md.
+    # testes for validada contra ela (ver PILOTO-MINISTACK.md).
     image: ministackorg/ministack:latest
     container_name: aws-learning-ministack
     ports:
       - "4566:4566"       # Edge port único para todas as APIs AWS emuladas
     environment:
       - AWS_DEFAULT_REGION=us-east-1
-      # Ao contrário do LocalStack, o MiniStack não exige uma lista explícita
-      # de serviços habilitados (SERVICES=...) — os 60+ serviços já vêm
-      # ativos por padrão.
-      # Por padrão, o estado do MiniStack é volátil (tudo em memória) — as
-      # duas flags abaixo habilitam persistência em disco entre restarts do
-      # container (equivalente ao PERSISTENCE=1 do LocalStack).
+      # O MiniStack habilita os 60+ serviços por padrão — não existe (nem é
+      # preciso) um equivalente à variável SERVICES do LocalStack.
+      # Estado é volátil por padrão (tudo em memória). PERSIST_STATE/STATE_DIR
+      # e S3_PERSIST/S3_DATA_DIR habilitam persistência em disco no volume
+      # nomeado abaixo — os diretórios precisam ser explicitados porque os
+      # defaults do MiniStack (/tmp/ministack-state, /tmp/ministack-data/s3)
+      # ficam fora de qualquer volume montado.
       - PERSIST_STATE=1
+      - STATE_DIR=/data/state
       - S3_PERSIST=1
+      - S3_DATA_DIR=/data/s3
     volumes:
-      - "ministack-data:/var/lib/localstack"
+      # Hook "ready.d" nativo do MiniStack: roda o script de provisionamento
+      # dentro do próprio container, assim que a API fica pronta para receber
+      # requisições — sem precisar de um container auxiliar. O healthcheck só
+      # fica "healthy" depois que os scripts deste diretório terminam.
+      - "./infra/ministack/init:/docker-entrypoint-initaws.d/ready.d:ro"
+      - "ministack-data:/data"
       - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:4566/_ministack/health"]
       interval: 5s
       timeout: 5s
       retries: 20
-
-  # Provisiona os recursos AWS (bucket, tabela, filas, tópico, segredo,
-  # parâmetros) rodando o script uma única vez, de fora do container do
-  # emulador — não depende de nenhum hook interno específico do MiniStack,
-  # só da API AWS padrão exposta na porta 4566.
-  init:
-    image: amazon/aws-cli:2.17.62
-    container_name: aws-learning-ministack-init
-    entrypoint: ["/bin/sh", "/init/init-aws.sh"]
-    environment:
-      - AWS_ACCESS_KEY_ID=test
-      - AWS_SECRET_ACCESS_KEY=test
-      - AWS_DEFAULT_REGION=us-east-1
-    volumes:
-      - "./infra/ministack/init/init-aws.sh:/init/init-aws.sh:ro"
-    depends_on:
-      ministack:
-        condition: service_healthy
 
   postgres:
     image: postgres:16-alpine
@@ -96,14 +85,14 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - AWS_ENDPOINT_URL=http://ministack:4566
+      # Único gatilho da emulação: ativa application-local.yml (credenciais de
+      # teste + endpoint do MiniStack). Ausente = profile de produção.
+      - SPRING_PROFILES_ACTIVE=local
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
       ministack:
         condition: service_healthy
-      init:
-        condition: service_completed_successfully
       redis:
         condition: service_healthy
 
@@ -115,15 +104,13 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - AWS_ENDPOINT_URL=http://ministack:4566
+      - SPRING_PROFILES_ACTIVE=local
       - DB_HOST=postgres
       - DB_PORT=5432
       - CATALOG_SERVICE_URL=http://catalog-service:8081
     depends_on:
       ministack:
         condition: service_healthy
-      init:
-        condition: service_completed_successfully
       postgres:
         condition: service_healthy
       catalog-service:
@@ -137,12 +124,10 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - AWS_ENDPOINT_URL=http://ministack:4566
+      - SPRING_PROFILES_ACTIVE=local
     depends_on:
       ministack:
         condition: service_healthy
-      init:
-        condition: service_completed_successfully
 
 volumes:
   ministack-data:

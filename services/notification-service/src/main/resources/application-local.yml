@@ -1,0 +1,13 @@
+# Ativado só com SPRING_PROFILES_ACTIVE=local (ver docker-compose.yml).
+# Único lugar do serviço com credenciais de teste e endpoint apontando para o
+# MiniStack — nenhuma dessas chaves existe no application.yml "de produção".
+spring:
+  cloud:
+    aws:
+      credentials:
+        access-key: test
+        secret-key: test
+      sqs:
+        endpoint: http://ministack:4566
+      ses:
+        endpoint: http://ministack:4566

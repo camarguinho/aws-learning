@@ -11,19 +11,11 @@ spring:
   cloud:
     aws:
       region:
-        static: us-east-1
-      credentials:
-        access-key: test
-        secret-key: test
-      # endpoint único do emulador AWS local para todos os serviços emulados
-      # (nesta branch, o MiniStack — ver PILOTO-MINISTACK.md).
-      # Em produção, essas três chaves de endpoint NÃO existem — o SDK
-      # resolve os endpoints reais da AWS automaticamente pela região.
-      dynamodb:
-        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
-      s3:
-        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
-        path-style-access-enabled: true
+        static: ${AWS_REGION:us-east-1}
+      # Nenhuma chave "credentials" nem "endpoint" aqui: o SDK usa a default
+      # credential provider chain (role do ECS/EC2/IRSA) e resolve os
+      # endpoints reais da AWS pela região. Essas chaves só existem no
+      # profile "local" (application-local.yml) — ver PILOTO-MINISTACK.md.
 
 app:
   s3:

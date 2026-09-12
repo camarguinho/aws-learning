@@ -7,15 +7,11 @@ spring:
   cloud:
     aws:
       region:
-        static: us-east-1
-      credentials:
-        access-key: test
-        secret-key: test
-      sqs:
-        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+        static: ${AWS_REGION:us-east-1}
       ses:
-        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
-        region: us-east-1
+        region: ${AWS_REGION:us-east-1}
+      # Nenhuma chave "credentials" nem "endpoint" aqui — ver
+      # application-local.yml e PILOTO-MINISTACK.md.
 
 app:
   ses:
