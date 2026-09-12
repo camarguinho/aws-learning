@@ -25,10 +25,14 @@ services:
       - "4566:4566"       # Edge port único para todas as APIs AWS emuladas
     environment:
       - AWS_DEFAULT_REGION=us-east-1
-      # Ao contrário do LocalStack, o MiniStack não parece exigir uma lista
-      # explícita de serviços habilitados (SERVICES=...) — os 60+ serviços
-      # já vêm ativos por padrão. Validar no piloto se PERSISTENCE de dados
-      # entre restarts precisa de alguma flag equivalente.
+      # Ao contrário do LocalStack, o MiniStack não exige uma lista explícita
+      # de serviços habilitados (SERVICES=...) — os 60+ serviços já vêm
+      # ativos por padrão.
+      # Por padrão, o estado do MiniStack é volátil (tudo em memória) — as
+      # duas flags abaixo habilitam persistência em disco entre restarts do
+      # container (equivalente ao PERSISTENCE=1 do LocalStack).
+      - PERSIST_STATE=1
+      - S3_PERSIST=1
     volumes:
       - "ministack-data:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
