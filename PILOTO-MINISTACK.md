@@ -92,6 +92,33 @@ qual(is) arquivo(s) de profile o Spring carrega.
   execuções de teste), `/_ministack/config` (reconfiguração em runtime).
   Nenhum desses é chamado pelo código da aplicação — só por humanos/CI.
 
+## Por que a fricção ao trocar pra AWS real não é igual para todo serviço
+
+O truque do edge port único (`4566`) só funciona porque o **SigV4** — o
+protocolo de assinatura que todo SDK AWS já usa pra autenticar qualquer
+chamada — carrega embutido no header `Authorization` qual serviço, região e
+data da chamada (`Credential=test/20260912/us-east-1/dynamodb/aws4_request`).
+O MiniStack lê esse header pra saber pra qual módulo interno rotear, sem
+precisar de porta/path dedicado por serviço. Esse mecanismo só cobre,
+porém, chamadas que **são**, elas mesmas, a API HTTP da AWS — e nem todo
+serviço se resume a isso:
+
+| Categoria | Serviços | Fricção ao trocar pra AWS real | Por quê |
+|---|---|---|---|
+| **Leve** — toda a interação é a própria API AWS | S3, DynamoDB, SQS, SNS, Secrets Manager, SSM, SES, CloudWatch Logs, IAM, CloudFormation | **Zero, estruturalmente** | Toda chamada (`PutItem`, `GetObject`, `SendMessage`...) é uma requisição HTTP assinada com SigV4 passando pelo `4566`. O SDK não distingue "chamando o MiniStack" de "chamando a AWS real" — é o mesmo protocolo, ponta a ponta. A única coisa que muda é endpoint + credenciais, isolados no profile `local` (ver tabela acima). O que sobra de trabalho ao trocar não é fricção de protocolo — é de configuração/política: nome de bucket único, IAM granular, sandbox do SES (ver seção seguinte). |
+| **Pesado — plano de controle** (a chamada que cria o recurso) | `CreateDBInstance` (RDS), `CreateCacheCluster` (ElastiCache), `RunTask`/`CreateService` (ECS) | Baixa, **se** exercitada via API do MiniStack | Essa chamada específica também é API AWS assinada com SigV4, então também passaria pelo edge port como qualquer serviço leve. |
+| **Pesado — plano de dados** (o tráfego real depois que o recurso existe) | JDBC/psycopg2 falando com o Postgres do RDS, protocolo RESP falando com o Redis do ElastiCache, tráfego de rede entre containers no ECS | **Alta — não reduzida pelo MiniStack** | Esse tráfego **nunca** passa pelo `4566` nem é assinado com SigV4: é o protocolo nativo do banco/cache/orquestrador, autenticado por usuário/senha de banco (ou rede de container), não por credencial AWS. Trocar "Postgres local" por "RDS real" continua sendo uma troca de host/porta/credencial de banco como sempre foi — o MiniStack não abstrai essa parte, exista ele ou não. |
+
+**Neste projeto, nem a fatia de "plano de controle" dos serviços pesados é
+exercitada**: `postgres` e `redis` são containers diretos do
+`docker-compose.yml` (portas `5432`/`6379` expostas diretamente), não
+recursos criados via `CreateDBInstance`/`CreateCacheCluster` na API do
+MiniStack. Ou seja, para RDS/ElastiCache/ECS o ganho de Edge Port + SigV4
+descrito nesta branch é **zero** — nem o provisionamento passou por ali.
+Vale dizer isso explicitamente ao propor adoção mais ampla: o argumento de
+"troca de profile, sem retrabalho" é comprovado para os serviços leves (a
+maioria dos casos de uso), não para os pesados com estado.
+
 ## Como validar
 
 ```bash
@@ -105,7 +132,13 @@ o LocalStack.
 
 ## Pontos de fricção ao trocar para AWS real (fora do escopo deste piloto)
 
-A troca de profile resolve a *conectividade*, não resolve tudo:
+A troca de profile resolve a *conectividade*, não resolve tudo. Os seis
+pontos abaixo valem para os **serviços leves** — onde a conectividade em si
+já é zero-fricção (seção anterior); são fricções de configuração/política
+que a troca de profile não cobre, não fricções de protocolo. Para os
+serviços pesados (RDS/ElastiCache/ECS), a fricção de protocolo em si já é
+alta por natureza — ver seção anterior — então os pontos abaixo se somam a
+ela, não a substituem:
 
 1. **IAM real** — o profile `local` aceita `access-key: test` sem checar
    permissão nenhuma; a role real do ECS/EC2 precisa da policy exata por
