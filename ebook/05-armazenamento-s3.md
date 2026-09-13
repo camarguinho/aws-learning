@@ -57,6 +57,27 @@ upload **diretamente** para o S3. Esse padrão:
 - É exatamente o padrão que a AWS recomenda e que a prova cobra como
   "melhor prática de upload de arquivos grandes".
 
+Isso significa que **nenhum endpoint do `catalog-service` recebe a
+imagem em si** — o `POST /image-upload-url` só devolve o texto da URL
+assinada; quem efetivamente grava o objeto no bucket é a própria chamada
+`PUT` que o cliente faz contra essa URL, direto no S3.
+
+### Atenção: a URL é válida só para o verbo com que foi assinada
+
+A assinatura AWS SigV4 embute, entre outras coisas, o **método HTTP** da
+requisição no cálculo do hash. Isso quer dizer que `createSignedPutURL`
+gera uma URL que só serve para `PUT`, e `createSignedGetURL` gera uma URL
+que só serve para `GET` — não são intercambiáveis. Se você pega a
+`uploadUrl` (assinada para `PUT`) e faz um `GET` nela — por exemplo,
+colando no navegador, que só sabe fazer `GET` ao carregar uma página —
+o S3 recalcula a assinatura esperada para a requisição que realmente
+chegou (com `GET`) e ela não bate com a que veio na URL: o erro é
+`403 SignatureDoesNotMatch`, não uma falha de configuração. Para
+visualizar a imagem depois do upload, é preciso pedir uma URL de leitura
+nova (`GET /api/v1/products/{id}` → campo `imageUrl`, assinado para
+`GET`) — ver o passo a passo completo no
+[Capítulo 17](17-guia-de-uso-swagger.md#2-opcional-fazer-upload-de-uma-imagem-para-o-produto).
+
 ## Boas práticas de segurança em S3
 
 - **Bloquear acesso público por padrão** (S3 Block Public Access) — a

@@ -45,14 +45,34 @@ curl -X POST http://localhost:8081/api/v1/products \
 
 Resposta: `201 Created` com o `productId` gerado (um UUID). Guarde esse id.
 
-### 2. (Opcional) Gerar URL de upload de imagem
+### 2. (Opcional) Fazer upload de uma imagem para o produto
+
+O upload é sempre em **duas chamadas separadas** — uma para o
+`catalog-service` (que só assina a URL) e outra direto para o S3, sem
+passar pelo microsserviço (ver a seção "Padrão de upload direto" do
+[Capítulo 5](05-armazenamento-s3.md)). Não existe um único endpoint que
+"recebe a imagem".
+
+**2a. Pedir a URL de upload ao catalog-service:**
 
 ```bash
 curl -X POST http://localhost:8081/api/v1/products/{productId}/image-upload-url
 ```
 
-Devolve uma `uploadUrl` pré-assinada do S3 (LocalStack). Um `PUT` nessa URL
-com o binário da imagem simula o upload direto ao bucket.
+Devolve um JSON com `uploadUrl`: uma URL pré-assinada do S3 emulado,
+**válida só para o método PUT** (a assinatura AWS SigV4 embute o verbo
+HTTP — usar qualquer outro método nela, incluindo `GET`, dá
+`403 SignatureDoesNotMatch`, não é bug).
+
+**2b. Enviar o arquivo direto pra essa URL, com PUT:**
+
+```bash
+curl -X PUT --data-binary @caminho/da/imagem.jpg "COLE_AQUI_A_uploadUrl"
+```
+
+**Não abra essa `uploadUrl` no navegador** — o navegador só sabe fazer
+`GET` ao carregar uma URL, e essa é assinada pra `PUT`. Pra *ver* a
+imagem depois, use a URL do passo 3 abaixo (essa sim, assinada pra `GET`).
 
 ### 3. Consultar o produto (primeira leitura = cache miss)
 
@@ -60,11 +80,17 @@ com o binário da imagem simula o upload direto ao bucket.
 curl http://localhost:8081/api/v1/products/{productId}
 ```
 
-Repita a mesma chamada: a segunda é servida pelo cache Redis
-(`@Cacheable`) — para confirmar, acompanhe os logs do `catalog-service`
-(não há log explícito de hit/miss por padrão, mas a latência da segunda
-chamada é visivelmente menor; para inspeção mais direta, conecte no Redis
-com `docker exec -it aws-learning-redis redis-cli KEYS "products*"`).
+Se um upload foi feito no passo 2, o campo `imageUrl` da resposta traz
+**outra** URL pré-assinada — essa assinada pra `GET`, com TTL de 15
+minutos. É essa que pode ser aberta direto no navegador para visualizar a
+imagem.
+
+Repita a mesma chamada de consulta do produto: a segunda é servida pelo
+cache Redis (`@Cacheable`) — para confirmar, acompanhe os logs do
+`catalog-service` (não há log explícito de hit/miss por padrão, mas a
+latência da segunda chamada é visivelmente menor; para inspeção mais
+direta, conecte no Redis com
+`docker exec -it aws-learning-redis redis-cli KEYS "products*"`).
 
 ### 4. Criar um pedido
 
