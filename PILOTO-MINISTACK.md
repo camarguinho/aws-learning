@@ -158,6 +158,49 @@ ela, não a substituem:
    catálogo é de graça e instantâneo no emulador; na DynamoDB real consome
    RCU e pode throttlar (ver capítulo 16 do ebook).
 
+## Menor fricção possível para os serviços pesados (RDS, ElastiCache)
+
+Diferente dos serviços leves, aqui não existe truque de edge port/SigV4 que
+zere a fricção — o tráfego (JDBC, RESP) nunca passa pelo MiniStack, então a
+troca "Postgres/Redis local → RDS/ElastiCache real" sempre foi, e continua
+sendo, uma troca de host/porta/credencial de banco, igual em qualquer app
+não-AWS. O que dá pra fazer é reduzir ao mínimo o que precisa mudar nesse
+momento:
+
+1. **Credenciais e TLS já viram variável de ambiente, não código** —
+   `order-service` aceita `DB_SSL_MODE` na URL JDBC
+   ([application.yml](services/order-service/src/main/resources/application.yml))
+   e `catalog-service` aceita `REDIS_PASSWORD`/`REDIS_SSL_ENABLED`
+   ([application.yml](services/catalog-service/src/main/resources/application.yml)),
+   default vazio/`disable`/`false` preservando o Postgres/Redis local sem
+   TLS. RDS moderno e ElastiCache com criptografia em trânsito habilitada
+   **exigem** TLS — sem isso pronto de antemão, a primeira tentativa de
+   conexão real falharia silenciosamente por handshake, não por credencial
+   errada, o que é mais difícil de diagnosticar sob pressão do go-live.
+2. **Mesma versão de engine local e real** — o `postgres:16-alpine` do
+   `docker-compose.yml` já fixa a major version; alinhar com o time de infra
+   pra a instância RDS real usar a mesma major (idealmente a mesma minor
+   disponível) evita divergência de comportamento de SQL/índice descoberta
+   só em produção.
+3. **`ddl-auto: update` não deve ir para produção** — aceitável só neste
+   projeto de estudo (já sinalizado em
+   [application.yml](services/order-service/src/main/resources/application.yml)).
+   Antes de apontar para o RDS real, trocar por uma migração versionada
+   (Flyway/Liquibase) com o schema já criado via migração, não inferido pelo
+   Hibernate — isso é trabalho a fazer ANTES da virada, não algo que a troca
+   de variável resolve.
+4. **Rede/VPC precisa ser validada num ambiente de verdade** — RDS e
+   ElastiCache reais vivem dentro de uma VPC, normalmente sem IP público; o
+   compute que roda os 3 serviços (ECS/EKS/EC2) precisa estar na mesma
+   VPC/subnets com Security Group liberando a porta certa. Isso não é
+   testável via MiniStack de jeito nenhum — a recomendação é validar essa
+   parte num ambiente de staging real (pode ser pequeno/efêmero) antes do
+   go-live, exatamente para isolar esse risco do resto do piloto.
+5. **Latência de rede real recalibra timeout de pool, não só Resilience4j**
+   — o ponto 5 da seção anterior já cobre circuit breaker/retry; o mesmo
+   vale para `spring.datasource.hikari.connection-timeout` e o timeout do
+   cliente Redis, calibrados hoje contra uma rede de container quase-zero.
+
 ## Checklist de observações (preencher durante o piloto)
 
 - [ ] `docker compose up --build` sobe sem erro e todos os healthchecks passam
@@ -170,3 +213,15 @@ ela, não a substituem:
       validar na prática
 - [ ] Anotar aqui qualquer erro, mensagem ou comportamento diferente do
       LocalStack, se encontrado
+- [x] **Observado nesta sessão**: em ~2 de 6 subidas completas via
+      `docker compose up --build`, o `order-service` falhou ao iniciar com
+      `Config data resource ... does not exist` no `aws-secretsmanager:/ecommerce/order-service/db-credentials`,
+      mesmo com `ministack: condition: service_healthy` satisfeito e o
+      segredo já criado (confirmado nos logs do `ready.d`). `docker compose
+      up -d order-service` isolado sempre recuperou de primeira. Não
+      reproduzido com causa identificada — parece uma corrida entre o
+      healthcheck do MiniStack reportar `healthy` e o estado do Secrets
+      Manager ficar de fato consultável por outro container. Vale
+      investigar (ou, como mitigação simples, um restart-policy/retry no
+      `order-service` para esse cenário específico) antes de generalizar o
+      piloto.

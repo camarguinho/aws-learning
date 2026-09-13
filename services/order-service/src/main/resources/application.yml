@@ -18,7 +18,10 @@ spring:
       - aws-secretsmanager:${ORDER_SERVICE_DB_SECRET_NAME:/ecommerce/order-service/db-credentials}
       - aws-parameterstore:${ORDER_SERVICE_PARAMETER_PATH:/ecommerce/order-service/}
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/orders
+    # sslmode default "disable" preserva o Postgres local (sem TLS); RDS real
+    # normalmente exige TLS — setar DB_SSL_MODE=require (ou verify-full com
+    # o certificado da AWS) só na hora da virada, via env var.
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/orders?sslmode=${DB_SSL_MODE:disable}
     username: ${username}
     password: ${password}
   jpa:

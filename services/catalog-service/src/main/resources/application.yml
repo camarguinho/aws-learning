@@ -8,6 +8,12 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
+      # Vazio/false preserva o Redis local (sem senha, sem TLS); ElastiCache
+      # real normalmente exige AUTH token + TLS em trânsito — setar
+      # REDIS_PASSWORD/REDIS_SSL_ENABLED=true só na hora da virada.
+      password: ${REDIS_PASSWORD:}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:false}
   cloud:
     aws:
       region:
