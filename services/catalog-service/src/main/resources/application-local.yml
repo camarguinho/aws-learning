@@ -16,3 +16,13 @@ spring:
         # Necessário só contra o emulador: a AWS real resolve bucket via
         # virtual-hosted-style (subdomínio), o MiniStack via path.
         path-style-access-enabled: true
+
+app:
+  s3:
+    # Host usado só pra ASSINAR a URL devolvida ao cliente (ver S3Config) —
+    # diferente do endpoint acima porque quem abre essa URL é o
+    # browser/cliente HTTP no host, não o container do catalog-service. O
+    # "ministack" do endpoint acima só resolve dentro da rede do Docker
+    # Compose; o host acessa o mesmo MiniStack via localhost (porta
+    # publicada em docker-compose.yml).
+    public-endpoint: http://localhost:4566
