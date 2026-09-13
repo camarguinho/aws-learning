@@ -33,11 +33,21 @@ public class CacheConfig {
                 .findAndRegisterModules()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
+        // GenericJackson2JsonRedisSerializer só ativa o "@class" no JSON (info
+        // de tipo necessária pra desserializar de volta pro DTO correto) por
+        // conta própria quando NÃO recebe um ObjectMapper customizado. Como
+        // fornecemos o nosso (pra desligar WRITE_DATES_AS_TIMESTAMPS), é
+        // preciso pedir isso explicitamente com defaultTyping(true) — do
+        // contrário o cache grava JSON sem tipo e a leitura de volta vira um
+        // LinkedHashMap genérico, quebrando o cast pro tipo esperado.
         RedisCacheConfiguration configuration = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofSeconds(ttlSeconds))
                 .disableCachingNullValues()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new GenericJackson2JsonRedisSerializer(objectMapper)));
+                        .fromSerializer(GenericJackson2JsonRedisSerializer.builder()
+                                .objectMapper(objectMapper)
+                                .defaultTyping(true)
+                                .build()));
 
         return builder -> builder.cacheDefaults(configuration);
     }
