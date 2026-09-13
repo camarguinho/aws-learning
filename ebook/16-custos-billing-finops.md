@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 16 de 18
+[⬅ Sumário](../README.md) · Capítulo 16 de 19
 
 # 16. Custos, Billing e FinOps
 

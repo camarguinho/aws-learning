@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 2 de 18
+[⬅ Sumário](../README.md) · Capítulo 2 de 19
 
 # 2. IAM, Segurança e Amazon Cognito
 

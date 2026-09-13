@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 1 de 18
+[⬅ Sumário](../README.md) · Capítulo 1 de 19
 
 # 1. Fundamentos AWS e o AWS Well-Architected Framework
 

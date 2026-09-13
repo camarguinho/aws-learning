@@ -8,7 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
- * Representa um item da tabela DynamoDB {@code Products}.
+ * Representa um item da tabela DynamoDB {@code product}.
  *
  * <p>O DynamoDB é um banco NoSQL chave-valor/documento: não existe schema
  * fixo de colunas, apenas uma chave primária obrigatória. Aqui usamos apenas

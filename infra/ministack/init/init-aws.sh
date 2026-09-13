@@ -8,19 +8,38 @@
 # AWS_ENDPOINT_URL já vêm injetados automaticamente pelo MiniStack neste
 # script — nenhuma configuração manual de credenciais/endpoint é necessária,
 # e a CLI "aws" já vem embutida na imagem.
+#
+# O SQS, porém, ignora a env var genérica AWS_ENDPOINT_URL: em us-east-1 o
+# botocore resolve o endpoint legado global do serviço (queue.amazonaws.com)
+# e a chamada acaba indo pra AWS real, que rejeita a credencial de teste com
+# "InvalidClientTokenId" (S3 e DynamoDB não têm esse problema — só o SQS).
+# Por isso toda chamada aqui usa "aws" via este wrapper, que passa
+# --endpoint-url explicitamente e funciona de forma consistente pra
+# qualquer serviço, independente dessa particularidade do SQS.
+aws() { command aws --endpoint-url "$AWS_ENDPOINT_URL" "$@"; }
+
 set -eu
 
 echo "==> [S3] Criando bucket de imagens de produto"
 aws s3 mb s3://ecommerce-product-images
 
 echo "==> [DynamoDB] Criando tabela de catálogo de produtos"
-# Nome "Product" (singular) porque o DynamoDbTemplate do Spring Cloud AWS
-# resolve o nome da tabela pelo simple name da classe anotada @DynamoDbBean.
-aws dynamodb create-table \
-  --table-name Product \
-  --attribute-definitions AttributeName=productId,AttributeType=S \
-  --key-schema AttributeName=productId,KeyType=HASH \
-  --billing-mode PAY_PER_REQUEST
+# Nome "product" (minúsculo, singular) porque o DynamoDbTemplate do Spring
+# Cloud AWS NÃO usa o simple name da classe anotada @DynamoDbBean como está;
+# o DefaultDynamoDbTableNameResolver converte para snake_case minúsculo
+# ("Product" -> "product") antes de resolver o nome da tabela.
+# create-table não é idempotente (ResourceInUseException se já existir) — e
+# com PERSIST_STATE=1 a tabela sobrevive a um restart do container, então o
+# ready.d roda de novo sobre estado que já tem a tabela.
+if aws dynamodb describe-table --table-name product >/dev/null 2>&1; then
+  echo "    tabela product já existe (estado persistido) — pulando"
+else
+  aws dynamodb create-table \
+    --table-name product \
+    --attribute-definitions AttributeName=productId,AttributeType=S \
+    --key-schema AttributeName=productId,KeyType=HASH \
+    --billing-mode PAY_PER_REQUEST
+fi
 
 echo "==> [SQS] Criando fila de eventos de pedido + DLQ"
 aws sqs create-queue --queue-name order-events-dlq
@@ -38,9 +57,16 @@ aws sns subscribe --topic-arn "$TOPIC_ARN" --protocol sqs --notification-endpoin
   --attributes '{"RawMessageDelivery":"true"}'
 
 echo "==> [Secrets Manager] Criando segredo com credenciais do RDS"
-aws secretsmanager create-secret \
-  --name /ecommerce/order-service/db-credentials \
-  --secret-string '{"username":"orders_app","password":"orders_app_pwd"}'
+# Mesmo motivo do guard do DynamoDB acima: create-secret não é idempotente
+# (ResourceExistsException) e o segredo sobrevive a um restart com estado
+# persistido.
+if aws secretsmanager describe-secret --secret-id /ecommerce/order-service/db-credentials >/dev/null 2>&1; then
+  echo "    segredo já existe (estado persistido) — pulando"
+else
+  aws secretsmanager create-secret \
+    --name /ecommerce/order-service/db-credentials \
+    --secret-string '{"username":"orders_app","password":"orders_app_pwd"}'
+fi
 
 echo "==> [SSM Parameter Store] Criando parâmetros de configuração"
 aws ssm put-parameter --name /ecommerce/order-service/db-url \

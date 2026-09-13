@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 10 de 18
+[⬅ Sumário](../README.md) · Capítulo 10 de 19
 
 # 10. E-mail Transacional: Amazon SES
 

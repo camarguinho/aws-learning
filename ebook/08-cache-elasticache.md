@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 8 de 18
+[⬅ Sumário](../README.md) · Capítulo 8 de 19
 
 # 8. Cache: Amazon ElastiCache (Redis)
 

@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 15 de 18
+[⬅ Sumário](../README.md) · Capítulo 15 de 19
 
 # 15. Resiliência com Resilience4j
 

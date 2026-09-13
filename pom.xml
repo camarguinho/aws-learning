@@ -4,6 +4,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+        Herdar do spring-boot-starter-parent (em vez de só importar o BOM
+        spring-boot-dependencies) traz de graça o pluginManagement do
+        spring-boot-maven-plugin já com o goal "repackage" vinculado à fase
+        "package". Sem isso, `mvn package` gera o jar "plain" (sem
+        Main-Class, sem dependências embutidas) e o container falha com
+        "no main manifest attribute, in app.jar" — foi exatamente o bug do
+        piloto MiniStack antes deste ajuste.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.3.5</version>
+        <relativePath/>
+    </parent>
+
     <groupId>br.com.camarguinho.awslearning</groupId>
     <artifactId>ecommerce-aws-spring-cloud</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -23,25 +39,20 @@
     </modules>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>21</maven.compiler.release>
+        <!-- spring-boot-starter-parent usa este java.version para computar
+             maven.compiler.release automaticamente. -->
         <java.version>21</java.version>
 
-        <spring-boot.version>3.3.5</spring-boot.version>
         <spring-cloud-aws.version>3.2.1</spring-cloud-aws.version>
         <resilience4j.version>2.2.0</resilience4j.version>
         <springdoc.version>2.6.0</springdoc.version>
     </properties>
 
+    <!-- spring-boot-dependencies (BOM) já vem herdado do
+         spring-boot-starter-parent — só precisamos importar os BOMs que
+         não fazem parte do ecossistema oficial do Spring Boot. -->
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>io.awspring.cloud</groupId>
                 <artifactId>spring-cloud-aws-dependencies</artifactId>
@@ -71,16 +82,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring-boot.version}</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
 </project>

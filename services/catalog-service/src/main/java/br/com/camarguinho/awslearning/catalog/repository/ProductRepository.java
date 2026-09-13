@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Acesso à tabela DynamoDB {@code Products} usando o {@link DynamoDbTemplate}
+ * Acesso à tabela DynamoDB {@code product} usando o {@link DynamoDbTemplate}
  * do Spring Cloud AWS — a camada de abstração equivalente ao
  * {@code JdbcTemplate}/{@code JpaRepository}, mas para o cliente "enhanced"
- * do DynamoDB. O template já resolve a tabela pelo nome anotado em
- * {@code @DynamoDbBean} (por convenção, o nome da classe: {@code Product});
- * o nome real da tabela é configurado em {@code application.yml}.
+ * do DynamoDB. O template resolve o nome da tabela a partir do simple name
+ * da classe anotada com {@code @DynamoDbBean}, convertido para snake_case
+ * minúsculo pelo {@code DefaultDynamoDbTableNameResolver} (ex.: {@code
+ * Product} -> {@code product}) — não é o nome da classe literal.
  */
 @Repository
 public class ProductRepository {

@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 9 de 18
+[⬅ Sumário](../README.md) · Capítulo 9 de 19
 
 # 9. Mensageria: Amazon SQS e Amazon SNS
 

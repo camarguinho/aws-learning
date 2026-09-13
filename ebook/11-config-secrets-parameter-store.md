@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 11 de 18
+[⬅ Sumário](../README.md) · Capítulo 11 de 19
 
 # 11. Configuração e Segredos: SSM Parameter Store e Secrets Manager
 

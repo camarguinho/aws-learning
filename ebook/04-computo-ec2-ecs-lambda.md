@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 4 de 18
+[⬅ Sumário](../README.md) · Capítulo 4 de 19
 
 # 4. Computação: EC2, ECS/Fargate e Lambda
 

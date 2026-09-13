@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 7 de 18
+[⬅ Sumário](../README.md) · Capítulo 7 de 19
 
 # 7. Banco de Dados NoSQL: Amazon DynamoDB
 

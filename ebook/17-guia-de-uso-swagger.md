@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 17 de 18
+[⬅ Sumário](../README.md) · Capítulo 17 de 19
 
 # 17. Guia de Uso e Swagger/OpenAPI
 

@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 18 de 18
+[⬅ Sumário](../README.md) · Capítulo 18 de 19
 
 # 18. Referências Oficiais AWS
 
@@ -58,4 +58,4 @@ do exame.
 - [draw.io / diagrams.net](https://www.diagrams.net/)
 
 ---
-**Anterior:** [← 17. Guia de Uso](17-guia-de-uso-swagger.md) | [⬆ Voltar ao Sumário](../README.md)
+**Anterior:** [← 17. Guia de Uso](17-guia-de-uso-swagger.md) | **Próximo:** [19. Catálogo de Produtos AWS →](19-catalogo-produtos-aws.md)

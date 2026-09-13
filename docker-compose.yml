@@ -44,7 +44,8 @@ services:
       - "ministack-data:/data"
       - "/var/run/docker.sock:/var/run/docker.sock"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/_ministack/health"]
+      # A imagem não traz curl/wget — só o Python do runtime do MiniStack.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4566/_ministack/health', timeout=3)"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -108,6 +109,15 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
       - CATALOG_SERVICE_URL=http://catalog-service:8081
+      # spring.config.import (aws-secretsmanager/aws-parameterstore) do
+      # application.yml é resolvido ANTES do Spring carregar o
+      # application-local.yml, então o endpoint/credenciais do MiniStack
+      # precisam chegar via env var (disponível desde o início do
+      # Environment) — não adianta colocar isso só no application-local.yml.
+      - SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY=test
+      - SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY=test
+      - SPRING_CLOUD_AWS_SECRETSMANAGER_ENDPOINT=http://ministack:4566
+      - SPRING_CLOUD_AWS_PARAMETERSTORE_ENDPOINT=http://ministack:4566
     depends_on:
       ministack:
         condition: service_healthy

@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 5 de 18
+[⬅ Sumário](../README.md) · Capítulo 5 de 19
 
 # 5. Armazenamento: Amazon S3
 

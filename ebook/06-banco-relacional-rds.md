@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 6 de 18
+[⬅ Sumário](../README.md) · Capítulo 6 de 19
 
 # 6. Banco de Dados Relacional: Amazon RDS
 

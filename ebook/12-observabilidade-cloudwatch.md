@@ -1,4 +1,4 @@
-[⬅ Sumário](../README.md) · Capítulo 12 de 18
+[⬅ Sumário](../README.md) · Capítulo 12 de 19
 
 # 12. Observabilidade: Amazon CloudWatch
 

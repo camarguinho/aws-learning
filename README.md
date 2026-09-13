@@ -47,6 +47,7 @@ capítulo 0:
 16. [Custos, Billing e FinOps](ebook/16-custos-billing-finops.md)
 17. [Guia de Uso e Swagger/OpenAPI](ebook/17-guia-de-uso-swagger.md)
 18. [Referências Oficiais AWS](ebook/18-referencias.md)
+19. [Catálogo Resumido de Produtos AWS por Categoria](ebook/19-catalogo-produtos-aws.md)
 
 ## 🗺️ Diagramas
 
