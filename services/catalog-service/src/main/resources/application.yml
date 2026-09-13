@@ -16,10 +16,20 @@ spring:
       # credential provider chain (role do ECS/EC2/IRSA) e resolve os
       # endpoints reais da AWS pela região. Essas chaves só existem no
       # profile "local" (application-local.yml) — ver PILOTO-MINISTACK.md.
+      dynamodb:
+        # A tabela é resolvida pelo Spring Cloud AWS a partir do nome da
+        # classe (@DynamoDbBean em Product.java -> "product"). table-prefix/
+        # table-suffix são o gancho oficial pra variar isso por ambiente
+        # (ex.: "prod_product") sem editar código Java.
+        table-prefix: ${DYNAMODB_TABLE_PREFIX:}
+        table-suffix: ${DYNAMODB_TABLE_SUFFIX:}
 
 app:
   s3:
-    product-images-bucket: ecommerce-product-images
+    # Nome do bucket real na AWS: bucket S3 é único MUNDIALMENTE, então
+    # "ecommerce-product-images" quase certamente precisa virar outra coisa
+    # em produção — sobrescrever via PRODUCT_IMAGES_BUCKET_NAME.
+    product-images-bucket: ${PRODUCT_IMAGES_BUCKET_NAME:ecommerce-product-images}
   cache:
     products-ttl-seconds: 300
 

@@ -8,10 +8,15 @@ spring:
   # Manager e os parâmetros de configuração do SSM Parameter Store. As chaves
   # do JSON do segredo (username/password) e o nome do parâmetro (db-url)
   # viram properties comuns, usadas logo abaixo em spring.datasource.*.
+  # Nome do segredo/caminho do parâmetro parametrizados: em produção, apontar
+  # para o que o Terraform/CDK/CloudFormation real criou, via
+  # ORDER_SERVICE_DB_SECRET_NAME / ORDER_SERVICE_PARAMETER_PATH — placeholder
+  # resolvido cedo o bastante (mesma fase do spring.config.import) porque vem
+  # de variável de ambiente, não de application-local.yml.
   config:
     import:
-      - aws-secretsmanager:/ecommerce/order-service/db-credentials
-      - aws-parameterstore:/ecommerce/order-service/
+      - aws-secretsmanager:${ORDER_SERVICE_DB_SECRET_NAME:/ecommerce/order-service/db-credentials}
+      - aws-parameterstore:${ORDER_SERVICE_PARAMETER_PATH:/ecommerce/order-service/}
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/orders
     username: ${username}
@@ -34,7 +39,9 @@ app:
   catalog-service:
     base-url: ${CATALOG_SERVICE_URL:http://localhost:8081}
   sns:
-    order-notifications-topic: order-notifications-topic
+    # Nome do tópico real na AWS pode ser diferente do usado no MiniStack —
+    # sobrescrever via ORDER_NOTIFICATIONS_TOPIC_NAME.
+    order-notifications-topic: ${ORDER_NOTIFICATIONS_TOPIC_NAME:order-notifications-topic}
 
 resilience4j:
   circuitbreaker:

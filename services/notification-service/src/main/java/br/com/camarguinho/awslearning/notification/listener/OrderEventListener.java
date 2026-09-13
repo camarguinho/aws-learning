@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 
 /**
- * Consumidor da fila Amazon SQS {@code order-events-queue}.
+ * Consumidor da fila Amazon SQS configurada em
+ * {@code app.sqs.order-events-queue-name} (default {@code order-events-queue}).
  *
  * <p>A fila está inscrita (com raw message delivery) no tópico SNS
  * {@code order-notifications-topic}: o order-service não conhece este
@@ -40,7 +41,7 @@ public class OrderEventListener {
         this.notificationMetrics = notificationMetrics;
     }
 
-    @SqsListener("order-events-queue")
+    @SqsListener("${app.sqs.order-events-queue-name}")
     public void onOrderCreated(OrderCreatedEvent event) {
         log.info("Evento OrderCreatedEvent recebido do SQS para o pedido {}", event.orderId());
         try {

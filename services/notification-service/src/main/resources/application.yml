@@ -15,7 +15,14 @@ spring:
 
 app:
   ses:
-    from-address: no-reply@ecommerce.example.com
+    # Em produção precisa ser um remetente VERIFICADO no SES (sandbox por
+    # padrão) — sobrescrever via SES_FROM_ADDRESS.
+    from-address: ${SES_FROM_ADDRESS:no-reply@ecommerce.example.com}
+  sqs:
+    # Nome real da fila pode diferir do usado no MiniStack — sobrescrever via
+    # ORDER_EVENTS_QUEUE_NAME. Consumido em OrderEventListener via
+    # @SqsListener("${app.sqs.order-events-queue-name}").
+    order-events-queue-name: ${ORDER_EVENTS_QUEUE_NAME:order-events-queue}
 
 resilience4j:
   retry:
