@@ -48,6 +48,26 @@ capítulo 0:
 17. [Guia de Uso e Swagger/OpenAPI](ebook/17-guia-de-uso-swagger.md)
 18. [Referências Oficiais AWS](ebook/18-referencias.md)
 
+## 🎯 Trilha SAA-C03: o que a prova cobra e o projeto não exercita
+
+Os capítulos acima ensinam os serviços na prática. A trilha em
+[`ebook/saa-c03/`](ebook/saa-c03/) completa o conteúdo da prova e organiza o
+estudo para você chegar a ela com segurança. Comece pelo plano:
+
+- [Plano de estudos](ebook/saa-c03/00-plano-de-estudos.md): formato da prova, pesos dos domínios, 5 fases e critério de prontidão
+- [Mapa de cobertura](ebook/saa-c03/mapa-de-cobertura.md): o que o repositório cobre e o que vem da trilha
+- [S1. ELB e Auto Scaling](ebook/saa-c03/01-elb-e-auto-scaling.md)
+- [S2. Route 53, CloudFront e Global Accelerator](ebook/saa-c03/02-route53-cloudfront-global-accelerator.md)
+- [S3. Segurança: KMS, WAF, detecção e governança](ebook/saa-c03/03-seguranca-kms-waf-governanca.md)
+- [S4. Recuperação de desastres e backup](ebook/saa-c03/04-dr-e-backup.md)
+- [S5. EBS, EFS, FSx e Storage Gateway](ebook/saa-c03/05-armazenamento-ebs-efs-fsx.md)
+- [S6. Conectividade híbrida e rede avançada](ebook/saa-c03/06-conectividade-hibrida.md)
+- [S7. Analytics, integração de aplicações e containers](ebook/saa-c03/07-analytics-integracao-containers.md)
+- [S8. Migração, transferência de dados e custos](ebook/saa-c03/08-migracao-transferencia-e-custos.md)
+- [Banco de questões de cenário](ebook/saa-c03/questoes-de-cenario.md)
+- [Laboratórios no console AWS](ebook/saa-c03/labs.md)
+- [Diário de erros](ebook/saa-c03/diario-de-erros.md)
+
 ## 🗺️ Diagramas
 
 Em [`ebook/diagrams/`](ebook/diagrams/): cada diagrama tem um `.svg` (renderiza
@@ -82,6 +102,7 @@ equivalente, para quem quiser editar visualmente em
 │   ├── order-service/          # RDS + Secrets Manager + Parameter Store + SNS
 │   └── notification-service/   # SQS + SES + CloudWatch
 └── ebook/                      # este ebook, em Markdown, + diagramas draw.io
+    └── saa-c03/                # trilha de estudo: plano, capítulos S1-S8, questões, labs, diário de erros
 ```
 
 ## 🚀 Quickstart

@@ -33,6 +33,32 @@ do exame.
 - [AWS IAM — User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/)
 - [Amazon Cognito — Developer Guide](https://docs.aws.amazon.com/cognito/latest/developerguide/)
 
+## Documentação dos serviços da trilha SAA-C03
+
+- [Elastic Load Balancing — User Guide](https://docs.aws.amazon.com/elasticloadbalancing/)
+- [Amazon EC2 Auto Scaling — User Guide](https://docs.aws.amazon.com/autoscaling/ec2/userguide/)
+- [Amazon Route 53 — Developer Guide](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/)
+- [Amazon CloudFront — Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/)
+- [AWS Global Accelerator — Developer Guide](https://docs.aws.amazon.com/global-accelerator/latest/dg/)
+- [AWS KMS — Developer Guide](https://docs.aws.amazon.com/kms/latest/developerguide/)
+- [AWS WAF — Developer Guide](https://docs.aws.amazon.com/waf/latest/developerguide/)
+- [AWS Organizations — User Guide](https://docs.aws.amazon.com/organizations/latest/userguide/)
+- [AWS Backup — Developer Guide](https://docs.aws.amazon.com/aws-backup/latest/devguide/)
+- [Disaster Recovery of Workloads on AWS (whitepaper)](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/)
+- [Amazon EBS — User Guide](https://docs.aws.amazon.com/ebs/latest/userguide/)
+- [Amazon EFS — User Guide](https://docs.aws.amazon.com/efs/latest/ug/)
+- [Amazon FSx](https://docs.aws.amazon.com/fsx/)
+- [AWS Storage Gateway — User Guide](https://docs.aws.amazon.com/storagegateway/)
+- [AWS Direct Connect — User Guide](https://docs.aws.amazon.com/directconnect/latest/UserGuide/)
+- [AWS Transit Gateway — Guide](https://docs.aws.amazon.com/vpc/latest/tgw/)
+- [AWS PrivateLink — Guide](https://docs.aws.amazon.com/vpc/latest/privatelink/)
+- [Amazon Kinesis Data Streams — Developer Guide](https://docs.aws.amazon.com/streams/latest/dev/)
+- [Amazon Athena — User Guide](https://docs.aws.amazon.com/athena/latest/ug/)
+- [Amazon API Gateway — Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/)
+- [AWS Step Functions — Developer Guide](https://docs.aws.amazon.com/step-functions/latest/dg/)
+- [AWS Database Migration Service — User Guide](https://docs.aws.amazon.com/dms/latest/userguide/)
+- [AWS DataSync — User Guide](https://docs.aws.amazon.com/datasync/latest/userguide/)
+
 ## Custos e FinOps
 
 - [AWS Pricing Calculator](https://calculator.aws)

@@ -76,6 +76,15 @@ Cada capítulo tem navegação **Anterior / Próximo** no rodapé — comece pel
 [Capítulo 1](01-fundamentos-aws-well-architected.md) e siga em sequência na
 primeira leitura.
 
+## Trilha de preparação para a prova
+
+Este projeto exercita os serviços na prática, mas não cobre tudo o que o
+SAA-C03 pede (por exemplo, ELB, Auto Scaling, Route 53, CloudFront, KMS, DR,
+EBS/EFS e rede híbrida). A trilha em [`saa-c03/`](saa-c03/00-plano-de-estudos.md)
+completa o conteúdo, e traz plano de estudos, banco de questões,
+laboratórios no console e diário de erros. Use o
+[mapa de cobertura](saa-c03/mapa-de-cobertura.md) como checklist.
+
 ## Convenção de código
 
 Todas as classes Java do projeto têm Javadoc explicando **por que** aquela
